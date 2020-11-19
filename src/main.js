@@ -2,6 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import ViewUI from 'view-design'
 import ElementUI from 'element-ui'
+import dateFormat from 'dateformat'
 import App from './App'
 import store from './store'
 import router from './router'
@@ -14,6 +15,7 @@ Vue.use(ViewUI)
 Vue.use(ElementUI)
 
 Vue.prototype.$axios = axios
+Vue.prototype.$dateFormat = dateFormat
 
 new Vue({
     el: '#app',

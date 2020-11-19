@@ -33,6 +33,24 @@ export const asyncRoutes = {
         meta: { title: '会员信息' },
         component: () => import('../views/Other.vue'),
     },
+    court: {
+        path: '/court', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'court',
+        meta: { title: '包场订单' },
+        component: () => import('../views/CourtOrders.vue'),
+    },
+    recharge: {
+        path: '/recharge', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'recharge',
+        meta: { title: '充值信息' },
+        component: () => import('../views/Recharge.vue'),
+    },
+    rechargeorders: {
+        path: '/rechargeorders', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'rechargeorders',
+        meta: { title: '充值订单' },
+        component: () => import('../views/RechargeOrders.vue'),
+    },
     t1: {
         path: 't1',
         name: 't1',

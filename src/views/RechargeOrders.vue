@@ -1,19 +1,28 @@
 <template>
   <div class="home-container">
     <div class="home-content">
-      <el-table :data="datas" height="550" fit border style="">
-        <el-table-column prop="created" label="注册日期" width="180">
+      <el-table height="550" :data="datas" fit border style="">
+        <el-table-column prop="orderDate" label="下单时间" width="150">
         </el-table-column>
-        <el-table-column prop="nickName" label="昵称" width="120">
+        <el-table-column prop="recharge.data.name" label="充值类型" width="120">
         </el-table-column>
-        <el-table-column prop="phoneNum" label="电话号码" width="200">
+        <el-table-column
+          prop="recharge.data.price"
+          label="充值金额"
+          width="120"
+        >
         </el-table-column>
-        <el-table-column prop="validTimes" label="次卡" width="120">
+        <el-table-column prop="userInfo.nickName" label="用户昵称" width="120">
         </el-table-column>
-        <el-table-column prop="validTime" label="时间卡" width="120">
+        <el-table-column
+          prop="userInfo.phoneNum"
+          label="用户联系方式"
+          width="120"
+        >
         </el-table-column>
       </el-table>
     </div>
+
     <div class="block">
       <el-pagination
         layout="prev, pager, next"
@@ -30,6 +39,9 @@
 /* eslint-disable quotes */
 /* eslint-disable indent */
 /* eslint-disable semi */
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-else-return */
+
 import { getCollectionCount, getCollectionsByPage } from "@/api";
 
 export default {
@@ -40,10 +52,11 @@ export default {
       currentPage: 1,
       pageSize: 20,
       datas: [],
+      collection: "orders",
     };
   },
   created() {
-    getCollectionCount("members")
+    getCollectionCount(this.$data.collection)
       .then((res) => {
         console.log(res);
         this.$data.pageCount = res.count;
@@ -68,13 +81,16 @@ export default {
     getCollection(currentPage, pageSize) {
       return new Promise((resolve, reject) => {
         const offset = (currentPage - 1) * pageSize;
-        getCollectionsByPage("members", offset, pageSize)
+        getCollectionsByPage(this.$data.collection, offset, pageSize)
           .then((res) => {
             const members = [];
             res.data.forEach((element) => {
               const member = JSON.parse(element);
-              const date = new Date(member.created.$date);
-              member.created = this.$dateFormat(date, "yyyy-mm-dd HH:MM");
+              const orderDate = new Date(member.orderDate.$date);
+              member.orderDate = this.$dateFormat(
+                orderDate,
+                "yyyy-mm-dd HH:MM"
+              );
               members.push(member);
             });
             resolve(members);
@@ -83,6 +99,17 @@ export default {
             reject(err);
           });
       });
+    },
+    formatOrderCourts(courts) {
+      const formatCourts = [];
+      let courtsStr = "";
+      courts.forEach((court) => {
+        const formatCourt = court.toString() + "号场，";
+        formatCourts.push(formatCourt);
+        courtsStr += formatCourt;
+      });
+      courtsStr = courtsStr.substr(0, courtsStr.length - 1);
+      return courtsStr;
     },
   },
 };

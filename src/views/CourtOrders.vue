@@ -2,15 +2,21 @@
   <div class="home-container">
     <div class="home-content">
       <el-table :data="datas" height="550" fit border style="">
-        <el-table-column prop="created" label="注册日期" width="180">
+        <el-table-column prop="created" label="下单时间" width="150">
         </el-table-column>
-        <el-table-column prop="nickName" label="昵称" width="120">
+        <el-table-column prop="orderDate" label="订单时间" width="150">
         </el-table-column>
-        <el-table-column prop="phoneNum" label="电话号码" width="200">
+        <el-table-column prop="courts" label="场地" width="180">
         </el-table-column>
-        <el-table-column prop="validTimes" label="次卡" width="120">
+        <el-table-column prop="userInfo.nickName" label="用户昵称" width="120">
         </el-table-column>
-        <el-table-column prop="validTime" label="时间卡" width="120">
+        <el-table-column
+          prop="userInfo.phoneNum"
+          label="用户联系方式"
+          width="120"
+        >
+        </el-table-column>
+        <el-table-column prop="hasRefund" label="退款" width="120">
         </el-table-column>
       </el-table>
     </div>
@@ -40,10 +46,11 @@ export default {
       currentPage: 1,
       pageSize: 20,
       datas: [],
+      collection: "courtOrders",
     };
   },
   created() {
-    getCollectionCount("members")
+    getCollectionCount(this.$data.collection)
       .then((res) => {
         console.log(res);
         this.$data.pageCount = res.count;
@@ -68,13 +75,20 @@ export default {
     getCollection(currentPage, pageSize) {
       return new Promise((resolve, reject) => {
         const offset = (currentPage - 1) * pageSize;
-        getCollectionsByPage("members", offset, pageSize)
+        getCollectionsByPage(this.$data.collection, offset, pageSize)
           .then((res) => {
             const members = [];
             res.data.forEach((element) => {
               const member = JSON.parse(element);
               const date = new Date(member.created.$date);
+              const orderDate = new Date(member.orderDate.$date);
               member.created = this.$dateFormat(date, "yyyy-mm-dd HH:MM");
+              member.courts = this.formatOrderCourts(member.courts);
+              member.hasRefund = member.hasRefund ? "已退款" : "未退款";
+              member.orderDate = this.$dateFormat(
+                orderDate,
+                "yyyy-mm-dd HH:MM"
+              );
               members.push(member);
             });
             resolve(members);
@@ -83,6 +97,17 @@ export default {
             reject(err);
           });
       });
+    },
+    formatOrderCourts(courts) {
+      const formatCourts = [];
+      let courtsStr = "";
+      courts.forEach((court) => {
+        const formatCourt = court.toString() + "号场，";
+        formatCourts.push(formatCourt);
+        courtsStr += formatCourt;
+      });
+      courtsStr = courtsStr.substr(0, courtsStr.length - 1);
+      return courtsStr;
     },
   },
 };

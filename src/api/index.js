@@ -26,23 +26,48 @@ export function fetchToken() {
     })
 }
 
-export function getAllCourts() {
+export function getDatas(data) {
     return request.post('/databasequery', {
-        query: "db.collection(\"courts\").get()"
+        query: "db.collection(\"" + data + "\").get()"
     })
 }
 
-export function updateCourt(court) {
-    const queryStr = "db.collection(\"courts\").doc(\"" + court._id + "\").update({data:{price:" + court.price + ",locked:" + court.locked + "}})"
-    console.log(queryStr)
+export function updateInfo(info, collection) {
+    const id = info._id
+    delete info._id
+    const data = { data: info }
+    const queryStr = "db.collection(\"" + collection + "\").doc(\"" + id + "\").update(" + JSON.stringify(data) + ")"
     return request.post('/databaseupdate', {
         query: queryStr
     })
 }
 
-export function getAllMembersCount() {
+export function deleteInfo(info, collection) {
+    const queryStr = "db.collection(\"" + collection + "\").doc(\"" + info._id + "\").remove()"
+    console.log(queryStr)
+    return request.post('/databasedelete', {
+        query: queryStr
+    })
+}
+
+export function addInfo(info, collection) {
+    const data = { data: info }
+    const queryStr = "db.collection(\"" + collection + "\").add(" + JSON.stringify(data) + ")"
+    return request.post('/databaseadd', {
+        query: queryStr
+    })
+}
+
+
+export function getCollectionCount(collection) {
     return request.post('/databasecount', {
-        query: "db.collection(\"members\").count()"
+        query: "db.collection(\"" + collection + "\").count()"
+    })
+}
+
+export function getCollectionsByPage(collection, page, limit) {
+    return request.post('/databasequery', {
+        query: "db.collection(\"" + collection + "\").limit(" + limit + ").skip(" + page + ").get()"
     })
 }
 

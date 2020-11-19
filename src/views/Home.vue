@@ -38,7 +38,7 @@
 /* eslint-disable quotes */
 /* eslint-disable indent */
 /* eslint-disable semi */
-import { getAllCourts, updateCourt } from "@/api";
+import { getDatas, updateInfo } from "@/api";
 
 export default {
   name: "home",
@@ -48,7 +48,7 @@ export default {
     };
   },
   created() {
-    getAllCourts().then((res) => {
+    getDatas("courts").then((res) => {
       const courts = [];
       res.data.forEach((element) => {
         const court = JSON.parse(element);
@@ -66,7 +66,9 @@ export default {
       })
         .then(() => {
           console.log(info);
-          updateCourt(info).then((res) => {
+          // eslint-disable-next-line radix
+          info.price = parseInt(info.price);
+          updateInfo(info, "courts").then((res) => {
             console.log(res);
             if (res.errcode == 0) {
               this.$message({
@@ -85,7 +87,7 @@ export default {
           console.log(err);
           this.$message({
             type: "info",
-            message: "已取消删除",
+            message: "保存失败",
           });
         });
     },
