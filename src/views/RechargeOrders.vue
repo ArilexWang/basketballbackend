@@ -58,8 +58,7 @@ export default {
   created() {
     getCollectionCount(this.$data.collection)
       .then((res) => {
-        console.log(res);
-        this.$data.pageCount = res.count;
+        this.$data.pageCount = res.total;
       })
       .catch((err) => {
         console.log(err);
@@ -83,33 +82,18 @@ export default {
         const offset = (currentPage - 1) * pageSize;
         getCollectionsByPage(this.$data.collection, offset, pageSize)
           .then((res) => {
-            const members = [];
             res.data.forEach((element) => {
-              const member = JSON.parse(element);
-              const orderDate = new Date(member.orderDate.$date);
-              member.orderDate = this.$dateFormat(
-                orderDate,
+              element.orderDate = this.$dateFormat(
+                element.orderDate,
                 "yyyy-mm-dd HH:MM"
               );
-              members.push(member);
             });
-            resolve(members);
+            resolve(res.data);
           })
           .catch((err) => {
             reject(err);
           });
       });
-    },
-    formatOrderCourts(courts) {
-      const formatCourts = [];
-      let courtsStr = "";
-      courts.forEach((court) => {
-        const formatCourt = court.toString() + "号场，";
-        formatCourts.push(formatCourt);
-        courtsStr += formatCourt;
-      });
-      courtsStr = courtsStr.substr(0, courtsStr.length - 1);
-      return courtsStr;
     },
   },
 };

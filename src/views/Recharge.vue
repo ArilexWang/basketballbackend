@@ -93,6 +93,7 @@
 /* eslint-disable quotes */
 /* eslint-disable indent */
 /* eslint-disable semi */
+/* eslint-disable radix */
 /* eslint-disable no-underscore-dangle */
 import { getDatas, updateInfo, deleteInfo, addInfo } from "@/api";
 
@@ -106,13 +107,10 @@ export default {
   },
   created() {
     getDatas("recharge").then((res) => {
-      const datas = [];
       res.data.forEach((element) => {
-        const info = JSON.parse(element);
-        info.type = info.type === 1;
-        datas.push(info);
+        element.type = element.type === 1;
       });
-      this.$data.datas = datas;
+      this.$data.datas = res.data;
     });
   },
   methods: {
@@ -124,13 +122,16 @@ export default {
       })
         .then(() => {
           updateInfo(info, "recharge").then((res) => {
+            info.price = parseInt(info.price);
             console.log(res);
-            if (res.errcode == 0) {
+            if (res.updated == 1) {
               this.$message({
                 type: "success",
                 message: "已保存!",
               });
+              this.$router.go(0);
             } else {
+              this.$router.go(0);
               this.$message({
                 type: "fail",
                 message: "保存失败!",
@@ -140,6 +141,7 @@ export default {
         })
         .catch((err) => {
           console.log(err);
+          this.$router.go(0);
           this.$message({
             type: "info",
             message: "保存失败",
@@ -163,12 +165,17 @@ export default {
       console.log(info);
       addInfo(info, "recharge").then((res) => {
         console.log(res);
-        if (res.errcode == 0) {
+        if (res.id) {
           this.$message({
             type: "success",
-            message: "删除成功!",
+            message: "新增成功!",
           });
           that.$router.go(0);
+        } else {
+          this.$message({
+            type: "info",
+            message: "新增失败!",
+          });
         }
       });
     },

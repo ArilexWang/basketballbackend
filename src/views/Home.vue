@@ -49,12 +49,8 @@ export default {
   },
   created() {
     getDatas("courts").then((res) => {
-      const courts = [];
-      res.data.forEach((element) => {
-        const court = JSON.parse(element);
-        courts.push(court);
-      });
-      this.$data.datas = courts;
+      console.log(res);
+      this.$data.datas = res.data;
     });
   },
   methods: {
@@ -65,21 +61,24 @@ export default {
         type: "warning",
       })
         .then(() => {
-          console.log(info);
           // eslint-disable-next-line radix
           info.price = parseInt(info.price);
           updateInfo(info, "courts").then((res) => {
-            console.log(res);
-            if (res.errcode == 0) {
+            if (res.updated == 1) {
               this.$message({
                 type: "success",
                 message: "已保存!",
+              });
+              getDatas("courts").then((res) => {
+                console.log(res);
+                this.$data.datas = res.data;
               });
             } else {
               this.$message({
                 type: "fail",
                 message: "保存失败!",
               });
+              this.$router.go(0);
             }
           });
         })
@@ -89,6 +88,7 @@ export default {
             type: "info",
             message: "保存失败",
           });
+          this.$router.go(0);
         });
     },
   },

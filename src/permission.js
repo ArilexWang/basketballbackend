@@ -25,6 +25,7 @@ router.beforeEach(async (to, from, next) => {
                 hasMenus = true
                 next({ path: to.path || '/' })
             } catch (error) {
+                console.log('abcd')
                 resetTokenAndClearUser()
                 next(`/login?redirect=${to.path}`)
             }
@@ -34,6 +35,7 @@ router.beforeEach(async (to, from, next) => {
         if (to.path === '/login') {
             next()
         } else {
+            console.log('abcd')
             next(`/login?redirect=${to.path}`)
         }
     }

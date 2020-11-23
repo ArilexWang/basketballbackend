@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Message } from 'view-design'
 import router from '@/router'
 import { showLoading, closeLoading } from '@/utils/loading'
-import { resetTokenAndClearUser, getTokenWithExpiry } from '@/utils'
+import { resetTokenAndClearUser } from '@/utils'
 
 const service = axios.create({
     baseURL: 'https://api.weixin.qq.com/tcb',
@@ -14,17 +14,7 @@ service.interceptors.request.use(config => {
     config.headers['Access-Control-Allow-Origin'] = '*'
     config.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
     // 请求token
-    if (config.url.indexOf('token') > -1) {
-        return config
-    }
-    let token = getTokenWithExpiry('token')
-    if (token != null) {
-        config.params = {
-            access_token: token,
-        }
-        config.data.env = 'test-3gyot3qv80f8b08e'
-        return config
-    }
+    return config
 }, (error) => Promise.reject(error))
 
 service.interceptors.response.use(response => {
