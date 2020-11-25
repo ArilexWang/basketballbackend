@@ -4,14 +4,6 @@
       <el-table :data="datas" fit border style="">
         <el-table-column prop="name" label="名称" width="120">
         </el-table-column>
-        <el-table-column prop="price" label="价格" width="120">
-          <template slot-scope="scope">
-            <el-input
-              v-model="scope.row.price"
-              placeholder="请输入内容"
-            ></el-input>
-          </template>
-        </el-table-column>
         <el-table-column prop="locked" label="锁场" width="120">
           <template slot-scope="scope">
             <el-switch
@@ -68,10 +60,6 @@ export default {
               this.$message({
                 type: "success",
                 message: "已保存!",
-              });
-              getDatas("courts").then((res) => {
-                console.log(res);
-                this.$data.datas = res.data;
               });
             } else {
               this.$message({

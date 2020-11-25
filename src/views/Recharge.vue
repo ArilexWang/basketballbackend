@@ -9,12 +9,12 @@
         </el-table-column>
         <el-table-column prop="price" label="价格" width="120">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.price"></el-input>
+            <el-input type="number" v-model="scope.row.price"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="price" label="价值" width="120">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.value"></el-input>
+            <el-input type="number" v-model="scope.row.value"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="type" label="类型(红为次卡)" width="120">
@@ -53,12 +53,12 @@
         </el-table-column>
         <el-table-column prop="price" label="价格" width="120">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.price"></el-input>
+            <el-input type="number" v-model="scope.row.price"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="price" label="价值" width="120">
+        <el-table-column prop="value" label="价值" width="120">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.value"></el-input>
+            <el-input type="number" v-model="scope.row.value"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="type" label="类型(红为次卡)" width="120">
@@ -121,15 +121,15 @@ export default {
         type: "warning",
       })
         .then(() => {
+          info.type = info.type ? 1 : 0;
           updateInfo(info, "recharge").then((res) => {
-            info.price = parseInt(info.price);
             console.log(res);
             if (res.updated == 1) {
               this.$message({
                 type: "success",
                 message: "已保存!",
               });
-              this.$router.go(0);
+              // this.$router.go(0);
             } else {
               this.$router.go(0);
               this.$message({

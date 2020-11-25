@@ -51,6 +51,48 @@ export const asyncRoutes = {
         meta: { title: '充值订单' },
         component: () => import('../views/RechargeOrders.vue'),
     },
+    monday: {
+        path: '/monday', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'monday',
+        meta: { title: '日期' },
+        component: () => import('../views/Monday.vue'),
+    },
+    sunday: {
+        path: '/sunday', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'sunday',
+        meta: { title: '日期' },
+        component: () => import('../views/Sunday.vue'),
+    },
+    tuesday: {
+        path: '/tuesday', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'tuesday',
+        meta: { title: '日期' },
+        component: () => import('../views/Tuesday.vue'),
+    },
+    wednesday: {
+        path: '/wednesday', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'wednesday',
+        meta: { title: '日期' },
+        component: () => import('../views/Wednesday.vue'),
+    },
+    thursday: {
+        path: '/thursday', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'thursday',
+        meta: { title: '日期' },
+        component: () => import('../views/Thursday.vue'),
+    },
+    friday: {
+        path: '/friday', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'friday',
+        meta: { title: '日期' },
+        component: () => import('../views/Friday.vue'),
+    },
+    saturday: {
+        path: '/saturday', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'saturday',
+        meta: { title: '日期' },
+        component: () => import('../views/Saturday.vue'),
+    },
     t1: {
         path: 't1',
         name: 't1',

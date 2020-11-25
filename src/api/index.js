@@ -16,11 +16,36 @@ export function getDatas(data) {
     })
 }
 
+export function getDataWithId(data, id) {
+    return new Promise((resolve, reject) => {
+        db.collection(data).doc(id).get().then(res => {
+            resolve(res)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
 export function updateInfo(info, collection) {
     const id = info._id
+    console.log(id)
     delete info._id
     return new Promise((resolve, reject) => {
         db.collection(collection).doc(id).update(info).then(res => {
+            resolve(res)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
+export function setInfo(info, collection) {
+    const id = info._id
+    console.log(id)
+    delete info._id
+    return new Promise((resolve, reject) => {
+        console.log(info)
+        db.collection(collection).doc(id).set(info).then(res => {
             resolve(res)
         }).catch(err => {
             reject(err)

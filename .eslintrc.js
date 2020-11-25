@@ -36,7 +36,7 @@ module.exports = {
         'global-require': 'off',
         'no-prototype-builtins': 'off',
         'consistent-return': 'off',
-        'vue/require-component-is': 'off',
+        // 'vue/require-component-is': 'off',
         'prefer-template': 'off',
         'one-var-declaration-per-line': 'off',
         'one-var': 'off',

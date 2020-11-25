@@ -1,10 +1,15 @@
+
 <template>
   <div class="home-container">
     <div class="home-content">
       <el-table :data="datas" height="550" fit border style="">
         <el-table-column prop="created" label="下单时间" width="150">
         </el-table-column>
-        <el-table-column prop="orderDate" label="订单时间" width="150">
+        <el-table-column prop="_id" label="业务订单号" width="130">
+        </el-table-column>
+        <el-table-column prop="transactionId" label="支付订单号" width="150">
+        </el-table-column>
+        <el-table-column prop="orderDate" label="场地时间" width="200">
         </el-table-column>
         <el-table-column prop="courts" label="场地" width="180">
         </el-table-column>
@@ -36,6 +41,8 @@
 /* eslint-disable quotes */
 /* eslint-disable indent */
 /* eslint-disable semi */
+/* eslint-disable operator-linebreak */
+/* eslint-disable operator-linebreak */
 import { getCollectionCount, getCollectionsByPage } from "@/api";
 
 export default {
@@ -46,6 +53,7 @@ export default {
       currentPage: 1,
       pageSize: 20,
       datas: [],
+      newData: {},
       collection: "courtOrders",
     };
   },
@@ -84,10 +92,10 @@ export default {
               );
               element.courts = this.formatOrderCourts(element.courts);
               element.hasRefund = element.hasRefund ? "已退款" : "未退款";
-              element.orderDate = this.$dateFormat(
-                element.orderDate,
-                "yyyy-mm-dd HH:MM"
-              );
+              element.orderDate =
+                this.$dateFormat(element.start, "yyyy-mm-dd HH:MM") +
+                " - " +
+                this.$dateFormat(element.end, "HH:MM");
             });
             resolve(res.data);
           })
