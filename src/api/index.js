@@ -93,3 +93,16 @@ export function getCollectionsByPage(collection, page, limit) {
         })
     })
 }
+
+export function callCloudFunction(functionName, param) {
+    return new Promise((resolve, reject) => {
+        vue.$app.callFunction({
+            name: functionName,
+            data: param
+        }).then(res => {
+            resolve(res)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}

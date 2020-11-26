@@ -93,6 +93,12 @@ export const asyncRoutes = {
         meta: { title: '日期' },
         component: () => import('../views/Saturday.vue'),
     },
+    vipcourt: {
+        path: '/vipcourt',
+        name: 'vipcourt',
+        meta: { title: '日期' },
+        component: () => import('../views/vip/vipCourt.vue'),
+    },
     t1: {
         path: 't1',
         name: 't1',

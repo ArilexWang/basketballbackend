@@ -29,13 +29,13 @@ const store = new Vuex.Store({
             {
                 name: 'court', // 要跳转的路由名称 不是路径
                 size: 18, // icon大小
-                type: 'ios-calendar', // icon类型
+                type: 'ios-apps', // icon类型
                 text: '包场订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
             },
             {
                 name: 'rechargeorders', // 要跳转的路由名称 不是路径
                 size: 18, // icon大小
-                type: 'ios-calendar', // icon类型
+                type: 'ios-add-circle', // icon类型
                 text: '充值订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
             },
             {
@@ -77,6 +77,25 @@ const store = new Vuex.Store({
                         type: 'ios-notifications-outline',
                         name: 'saturday',
                         text: '星期六',
+                    },
+                ],
+            },
+            {
+                text: 'VIP通道',
+                size: 18,
+                type: 'ios-basketball',
+                children: [
+                    {
+                        name: 'vipcourt',
+                        size: 18,
+                        type: 'ios-apps',
+                        text: 'VIP包场',
+                    },
+                    {
+                        name: 'viprecharge',
+                        size: 18,
+                        type: 'ios-add-circle',
+                        text: 'VIP充值',
                     },
                 ],
             },
