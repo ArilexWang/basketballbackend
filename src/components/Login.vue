@@ -49,8 +49,8 @@ export default {
   name: "login",
   data() {
     return {
-      account: "admin",
-      pwd: "admin",
+      account: "huiwannanbu@163.com",
+      pwd: "",
       accountError: "",
       pwdError: "",
       isShowLoading: false,
@@ -73,40 +73,47 @@ export default {
   },
   methods: {
     verifyAccount() {
-      if (this.account !== "admin") {
-        this.accountError = "账号为admin";
-      } else {
-        this.accountError = "";
-      }
+      // if (this.account !== "admin") {
+      //   this.accountError = "账号为admin";
+      // } else {
+      //   this.accountError = "";
+      // }
     },
     verifyPwd() {
-      if (this.pwd !== "admin") {
-        this.pwdError = "密码错误";
-      } else {
-        this.pwdError = "";
-      }
+      // if (this.pwd !== "admin") {
+      //   this.pwdError = "密码错误";
+      // } else {
+      //   this.pwdError = "";
+      // }
     },
     register() {},
     forgetPwd() {},
     submit() {
-      if (this.account === "admin" && this.pwd === "admin") {
-        this.isShowLoading = true;
-        // 登陆成功 设置用户信息
-        localStorage.setItem(
-          "userImg",
-          "https://avatars3.githubusercontent.com/u/22117876?s=460&v=4"
-        );
-        localStorage.setItem("userName", "小明");
-        this.$router.push({ path: this.redirect || "/" });
-      } else {
-        if (this.account !== "admin") {
-          this.accountError = "账号为admin";
-        }
-
-        if (this.pwd !== "admin") {
-          this.pwdError = "密码为admin";
-        }
-      }
+      this.$app
+        .auth()
+        .signInWithEmailAndPassword(this.account, this.pwd)
+        .then((loginState) => {
+          console.log(loginState);
+          localStorage.setItem("userName", "小明");
+          this.$router.push({ path: this.redirect || "/" });
+        });
+      // if (this.account === "admin" && this.pwd === "admin") {
+      //   this.isShowLoading = true;
+      //   // 登陆成功 设置用户信息
+      //   localStorage.setItem(
+      //     "userImg",
+      //     "https://avatars3.githubusercontent.com/u/22117876?s=460&v=4"
+      //   );
+      //   localStorage.setItem("userName", "小明");
+      //   this.$router.push({ path: this.redirect || "/" });
+      // } else {
+      //   if (this.account !== "admin") {
+      //     this.accountError = "账号为admin";
+      //   }
+      //   if (this.pwd !== "admin") {
+      //     this.pwdError = "密码为admin";
+      //   }
+      // }
     },
   },
 };

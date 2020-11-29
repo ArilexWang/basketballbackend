@@ -107,6 +107,7 @@ export default {
   },
   created() {
     getDatas("recharge").then((res) => {
+      console.log(res);
       res.data.forEach((element) => {
         element.type = element.type === 1;
       });
@@ -122,6 +123,8 @@ export default {
       })
         .then(() => {
           info.type = info.type ? 1 : 0;
+          info.price = parseInt(info.price);
+          info.value = parseInt(info.value);
           updateInfo(info, "recharge").then((res) => {
             console.log(res);
             if (res.updated == 1) {

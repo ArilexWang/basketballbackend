@@ -7,7 +7,11 @@
         </el-table-column>
         <el-table-column prop="_id" label="业务订单号" width="130">
         </el-table-column>
-        <el-table-column prop="transactionId" label="支付订单号" width="150">
+        <el-table-column
+          prop="payMsg.transactionId"
+          label="支付订单号"
+          width="150"
+        >
         </el-table-column>
         <el-table-column prop="orderDateFormat" label="场地时间" width="200">
         </el-table-column>
@@ -25,12 +29,6 @@
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
-            <el-button
-              v-if="scope.row.hasRefundFormat === '未退款'"
-              @click="handleRefund(scope.row)"
-              size="mini"
-              >退款</el-button
-            >
             <el-button
               @click="handleDelete(scope.row)"
               size="mini"
@@ -60,10 +58,9 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable operator-linebreak */
 import {
-  getCollectionCount,
-  getCollectionsByPage,
+  getCollectionCountWithParam,
+  getCollectionsByPageWithParam,
   deleteInfo,
-  callCloudFunction,
 } from "@/api";
 
 export default {
@@ -79,7 +76,7 @@ export default {
     };
   },
   created() {
-    getCollectionCount(this.$data.collection)
+    getCollectionCountWithParam(this.$data.collection, { isVIP: false })
       .then((res) => {
         console.log(res);
         this.$data.pageCount = res.total;
@@ -91,6 +88,7 @@ export default {
   mounted() {
     this.getCollection(this.$data.currentPage, this.$data.pageSize).then(
       (res) => {
+        res.sort((a, b) => b.created - a.created);
         this.$data.datas = res;
       }
     );
@@ -104,19 +102,23 @@ export default {
     getCollection(currentPage, pageSize) {
       return new Promise((resolve, reject) => {
         const offset = (currentPage - 1) * pageSize;
-        getCollectionsByPage(this.$data.collection, offset, pageSize)
+        getCollectionsByPageWithParam(this.$data.collection, offset, pageSize, {
+          isVIP: false,
+        })
           .then((res) => {
             res.data.forEach((element) => {
               element.createdFormat = this.$dateFormat(
                 element.created,
                 "yyyy-mm-dd HH:MM"
               );
-              element.courtsFormat = this.formatOrderCourts(element.courts);
+              element.courtsFormat = this.formatOrderCourts(
+                element.orderMsg.courts
+              );
               element.hasRefundFormat = element.hasRefund ? "已退款" : "未退款";
               element.orderDateFormat =
-                this.$dateFormat(element.start, "yyyy-mm-dd HH:MM") +
+                this.$dateFormat(element.orderMsg.start, "yyyy-mm-dd HH:MM") +
                 " - " +
-                this.$dateFormat(element.end, "HH:MM");
+                this.$dateFormat(element.orderMsg.end, "HH:MM");
             });
             resolve(res.data);
           })
@@ -126,12 +128,9 @@ export default {
       });
     },
     formatOrderCourts(courts) {
-      const formatCourts = [];
       let courtsStr = "";
       courts.forEach((court) => {
-        const formatCourt = court.toString() + "号场，";
-        formatCourts.push(formatCourt);
-        courtsStr += formatCourt;
+        courtsStr += court.name + " ,";
       });
       courtsStr = courtsStr.substr(0, courtsStr.length - 1);
       return courtsStr;
@@ -143,25 +142,32 @@ export default {
         type: "warning",
       }).then(() => {
         console.log(info);
-        deleteInfo(info, this.$data.collection).then((res) => {
-          console.log(res);
-          this.$message({
-            type: "success",
-            message: "已删除，请刷新页面",
+        if (info.hasRefund) {
+          console.log("已退款");
+          deleteInfo(info, this.$data.collection).then((res) => {
+            console.log(res);
+            this.$message({
+              type: "success",
+              message: "已删除，请刷新页面",
+            });
           });
-        });
-      });
-    },
-    handleRefund(info) {
-      this.$confirm("是否操作退款", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        console.log(info);
-        callCloudFunction("courtOrderRefund", info).then((res) => {
-          console.log("res", res);
-        });
+        } else {
+          const promises = info.resourceIds.map((id) => {
+            const resource = { _id: id };
+            console.log(resource);
+            return deleteInfo(resource, "resource");
+          });
+          Promise.all(promises).then((res) => {
+            console.log(res);
+            deleteInfo(info, this.$data.collection).then((deleteRes) => {
+              console.log(deleteRes);
+              this.$message({
+                type: "success",
+                message: "已删除，请刷新页面",
+              });
+            });
+          });
+        }
       });
     },
   },

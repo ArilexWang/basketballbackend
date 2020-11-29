@@ -55,6 +55,7 @@ export function setInfo(info, collection) {
 
 export function deleteInfo(info, collection) {
     return new Promise((resolve, reject) => {
+        console.log('info', info)
         db.collection(collection).doc(info._id).remove().then(res => {
             resolve(res)
         }).catch(err => {
@@ -84,9 +85,42 @@ export function getCollectionCount(collection) {
     })
 }
 
+export function getCollectionCountWithParam(collection, param) {
+    return new Promise((resolve, reject) => {
+        db.collection(collection).where(param).count().then(res => {
+            resolve(res)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
 export function getCollectionsByPage(collection, page, limit) {
     return new Promise((resolve, reject) => {
         db.collection(collection).limit(limit).skip(page).get().then(res => {
+            resolve(res)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
+export function getCollectionsByPageWithParam(collection, page, limit, param) {
+    return new Promise((resolve, reject) => {
+        db.collection(collection).where(param).limit(limit).skip(page).get().then(res => {
+            resolve(res)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
+export function getCollectionsByPageWithKey(collection, page, limit, key) {
+    return new Promise((resolve, reject) => {
+        const _ = db.command
+        db.collection(collection).where({
+            key: _.exists(true)
+        }).limit(limit).skip(page).get().then(res => {
             resolve(res)
         }).catch(err => {
             reject(err)
