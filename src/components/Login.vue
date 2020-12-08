@@ -86,7 +86,17 @@ export default {
       //   this.pwdError = "";
       // }
     },
-    register() {},
+    register() {
+      console.log(this.account);
+      console.log(this.pwd);
+      // this.$app
+      //   .auth()
+      //   .signUpWithEmailAndPassword(this.account, this.pwd)
+      //   .then((res) => {
+      //     console.log(res);
+      //     // 发送验证邮件成功
+      //   });
+    },
     forgetPwd() {},
     submit() {
       this.$app
@@ -96,6 +106,9 @@ export default {
           console.log(loginState);
           localStorage.setItem("userName", "小明");
           this.$router.push({ path: this.redirect || "/" });
+        })
+        .catch((err) => {
+          console.log(err);
         });
       // if (this.account === "admin" && this.pwd === "admin") {
       //   this.isShowLoading = true;

@@ -130,11 +130,9 @@ export default {
             if (res.updated == 1) {
               this.$message({
                 type: "success",
-                message: "已保存!",
+                message: "已保存!请刷新页面",
               });
-              // this.$router.go(0);
             } else {
-              this.$router.go(0);
               this.$message({
                 type: "fail",
                 message: "保存失败!",

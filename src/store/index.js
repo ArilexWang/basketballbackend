@@ -91,12 +91,6 @@ const store = new Vuex.Store({
                         type: 'ios-apps',
                         text: 'VIP包场',
                     },
-                    {
-                        name: 'viprecharge',
-                        size: 18,
-                        type: 'ios-add-circle',
-                        text: 'VIP充值',
-                    },
                 ],
             },
         ],

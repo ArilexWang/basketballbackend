@@ -115,19 +115,15 @@ export function getCollectionsByPageWithParam(collection, page, limit, param) {
     })
 }
 
-export function getCollectionsByPageWithKey(collection, page, limit, key) {
+export function getCollectionsByPageWithParamAndOrder(collection, page, limit, param, fieldPath, order) {
     return new Promise((resolve, reject) => {
-        const _ = db.command
-        db.collection(collection).where({
-            key: _.exists(true)
-        }).limit(limit).skip(page).get().then(res => {
+        db.collection(collection).where(param).limit(limit).skip(page).orderBy(fieldPath, order).get().then(res => {
             resolve(res)
         }).catch(err => {
             reject(err)
         })
     })
 }
-
 export function callCloudFunction(functionName, param) {
     return new Promise((resolve, reject) => {
         vue.$app.callFunction({

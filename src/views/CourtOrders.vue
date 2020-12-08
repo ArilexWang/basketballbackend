@@ -2,6 +2,19 @@
 <template>
   <div class="home-container">
     <div class="home-content">
+      <el-input
+        placeholder="请输入手机号进行搜索"
+        v-model="search"
+        style="width: 300px"
+        clearable
+        @clear="clearClick"
+      >
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="searchClick"
+        ></el-button>
+      </el-input>
       <el-table :data="datas" height="550" fit border style="">
         <el-table-column prop="createdFormat" label="下单时间" width="150">
         </el-table-column>
@@ -59,7 +72,7 @@
 /* eslint-disable operator-linebreak */
 import {
   getCollectionCountWithParam,
-  getCollectionsByPageWithParam,
+  getCollectionsByPageWithParamAndOrder,
   deleteInfo,
 } from "@/api";
 
@@ -72,6 +85,7 @@ export default {
       pageSize: 20,
       datas: [],
       newData: {},
+      search: "",
       collection: "courtOrders",
     };
   },
@@ -86,25 +100,32 @@ export default {
       });
   },
   mounted() {
-    this.getCollection(this.$data.currentPage, this.$data.pageSize).then(
-      (res) => {
-        res.sort((a, b) => b.created - a.created);
-        this.$data.datas = res;
-      }
-    );
+    this.getCollection(this.$data.currentPage, this.$data.pageSize, {
+      isVIP: false,
+    }).then((res) => {
+      res.sort((a, b) => b.created - a.created);
+      this.$data.datas = res;
+    });
   },
   methods: {
     handleCurrentChange(val) {
-      this.getCollection(val, this.$data.pageSize).then((res) => {
+      this.getCollection(val, this.$data.pageSize, {
+        isVIP: false,
+      }).then((res) => {
         this.$data.datas = res;
       });
     },
-    getCollection(currentPage, pageSize) {
+    getCollection(currentPage, pageSize, param) {
       return new Promise((resolve, reject) => {
         const offset = (currentPage - 1) * pageSize;
-        getCollectionsByPageWithParam(this.$data.collection, offset, pageSize, {
-          isVIP: false,
-        })
+        getCollectionsByPageWithParamAndOrder(
+          this.$data.collection,
+          offset,
+          pageSize,
+          param,
+          "created",
+          "desc"
+        )
           .then((res) => {
             res.data.forEach((element) => {
               element.createdFormat = this.$dateFormat(
@@ -141,9 +162,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
-        console.log(info);
         if (info.hasRefund) {
-          console.log("已退款");
           deleteInfo(info, this.$data.collection).then((res) => {
             console.log(res);
             this.$message({
@@ -152,7 +171,8 @@ export default {
             });
           });
         } else {
-          const promises = info.resourceIds.map((id) => {
+          console.log(info);
+          const promises = info.orderMsg.resourceIds.map((id) => {
             const resource = { _id: id };
             console.log(resource);
             return deleteInfo(resource, "resource");
@@ -168,6 +188,34 @@ export default {
             });
           });
         }
+      });
+    },
+    searchClick() {
+      getCollectionCountWithParam(this.$data.collection, {
+        isVIP: false,
+        "userInfo.phoneNum": this.$data.search,
+      })
+        .then((res) => {
+          console.log(res);
+          this.$data.pageCount = res.total;
+          this.getCollection(this.$data.currentPage, this.$data.pageSize, {
+            isVIP: false,
+            "userInfo.phoneNum": this.$data.search,
+          }).then((datas) => {
+            datas.sort((a, b) => b.created - a.created);
+            this.$data.datas = datas;
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    clearClick() {
+      this.getCollection(this.$data.currentPage, this.$data.pageSize, {
+        isVIP: false,
+      }).then((res) => {
+        res.sort((a, b) => b.created - a.created);
+        this.$data.datas = res;
       });
     },
   },

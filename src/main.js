@@ -16,7 +16,8 @@ Vue.use(ViewUI)
 Vue.use(ElementUI)
 
 const app = cloudbase.init({
-    env: 'test-3gyot3qv80f8b08e',
+    // env: 'test-3gyot3qv80f8b08e',
+    env: 'props-5gyd9ji1143b3cf0',
 })
 Vue.prototype.$app = app
 Vue.prototype.$axios = axios
@@ -31,16 +32,6 @@ if (auth.hasLoginState()) {
     // 此时已经登录
 } else {
     console.log('has not login')
-    auth.anonymousAuthProvider().signIn().then(() => {
-        auth.getLoginState().then((res) => {
-            if (res.isAnonymousAuth) {
-                const expire = res.credential.accessTokenExpire
-                console.log(new Date(expire))
-                localStorage.setItem('token', res.accessToken)
-            }
-        })
-    })
-    // 此时未登录，执行您的登录流程
 }
 
 const vue = new Vue({

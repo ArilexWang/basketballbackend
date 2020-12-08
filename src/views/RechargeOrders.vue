@@ -1,16 +1,27 @@
 <template>
   <div class="home-container">
     <div class="home-content">
+      <el-input
+        placeholder="请输入手机号进行搜索"
+        v-model="search"
+        style="width: 300px"
+        clearable
+        @clear="clearClick"
+      >
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="searchClick"
+        ></el-button>
+      </el-input>
       <el-table height="550" :data="datas" fit border style="">
         <el-table-column prop="orderDate" label="下单时间" width="150">
         </el-table-column>
+        <el-table-column prop="transactionId" label="订单号" width="150">
+        </el-table-column>
         <el-table-column prop="recharge.data.name" label="充值类型" width="120">
         </el-table-column>
-        <el-table-column
-          prop="recharge.data.price"
-          label="充值金额"
-          width="120"
-        >
+        <el-table-column prop="cashFee" label="充值金额" width="120">
         </el-table-column>
         <el-table-column prop="userInfo.nickName" label="用户昵称" width="120">
         </el-table-column>
@@ -19,6 +30,16 @@
           label="用户联系方式"
           width="120"
         >
+        </el-table-column>
+        <el-table-column label="操作" width="150">
+          <template slot-scope="scope">
+            <el-button
+              @click="handleDelete(scope.row)"
+              size="mini"
+              type="danger"
+              >删除</el-button
+            >
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -42,7 +63,12 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-else-return */
 
-import { getCollectionCount, getCollectionsByPage } from "@/api";
+import {
+  getCollectionCount,
+  deleteInfo,
+  getCollectionCountWithParam,
+  getCollectionsByPageWithParamAndOrder,
+} from "@/api";
 
 export default {
   name: "other",
@@ -52,7 +78,9 @@ export default {
       currentPage: 1,
       pageSize: 20,
       datas: [],
+      boolTrue: true,
       collection: "orders",
+      search: "",
     };
   },
   created() {
@@ -65,23 +93,33 @@ export default {
       });
   },
   mounted() {
-    this.getCollection(this.$data.currentPage, this.$data.pageSize).then(
+    this.getCollection(this.$data.currentPage, this.$data.pageSize, {}).then(
       (res) => {
+        console.log(res);
         this.$data.datas = res;
       }
     );
   },
   methods: {
     handleCurrentChange(val) {
-      this.getCollection(val, this.$data.pageSize).then((res) => {
+      console.log(val);
+      this.getCollection(val, this.$data.pageSize, {}).then((res) => {
         this.$data.datas = res;
       });
     },
-    getCollection(currentPage, pageSize) {
+    getCollection(currentPage, pageSize, param) {
       return new Promise((resolve, reject) => {
         const offset = (currentPage - 1) * pageSize;
-        getCollectionsByPage(this.$data.collection, offset, pageSize)
+        getCollectionsByPageWithParamAndOrder(
+          this.$data.collection,
+          offset,
+          pageSize,
+          param,
+          "created",
+          "desc"
+        )
           .then((res) => {
+            res.data.sort((a, b) => b.orderDate - a.orderDate);
             res.data.forEach((element) => {
               element.orderDate = this.$dateFormat(
                 element.orderDate,
@@ -94,6 +132,47 @@ export default {
             reject(err);
           });
       });
+    },
+    handleDelete(info) {
+      this.$confirm("是否删除当前充值信息", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        deleteInfo(info, this.$data.collection).then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!请刷新页面",
+          });
+        });
+      });
+    },
+    searchClick() {
+      getCollectionCountWithParam(this.$data.collection, {
+        "userInfo.phoneNum": this.$data.search,
+      })
+        .then((res) => {
+          console.log(res);
+          this.$data.pageCount = res.total;
+          this.getCollection(this.$data.currentPage, this.$data.pageSize, {
+            "userInfo.phoneNum": this.$data.search,
+          }).then((datas) => {
+            console.log(datas);
+            datas.sort((a, b) => b.created - a.created);
+            this.$data.datas = datas;
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    clearClick() {
+      this.getCollection(this.$data.currentPage, this.$data.pageSize, {}).then(
+        (res) => {
+          console.log(res);
+          this.$data.datas = res;
+        }
+      );
     },
   },
 };

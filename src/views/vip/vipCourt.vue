@@ -184,13 +184,25 @@ export default {
         type: "warning",
       }).then(() => {
         console.log(info);
-        deleteInfo(info, this.$data.collection).then((res) => {
-          console.log(res);
-          this.$message({
-            type: "success",
-            message: "已删除，请刷新页面",
+        callCloudFunction("releaseResource", {
+          ids: info.orderMsg.resourceIds,
+        })
+          .then(() => {
+            deleteInfo(info, this.$data.collection)
+              .then(() => {
+                this.$message({
+                  type: "success",
+                  message: "已删除，请刷新页面",
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+                console.log("删除失败");
+              });
+          })
+          .catch((err) => {
+            console.log("释放资源失败", err);
           });
-        });
       });
     },
     handleAdd(info) {
@@ -198,8 +210,8 @@ export default {
       const endT = startT + 2 * 3600 * 1000;
       const endTime = new Date(endT);
       const order = {
-        start: info.start.toISOString(),
-        end: endTime.toISOString(),
+        start: info.start,
+        end: endTime,
         courts: this.selectedCourt,
       };
       const infoMsg = {
@@ -207,6 +219,7 @@ export default {
         created: new Date(),
         orderMsg: order,
         isVIP: true,
+        validCount: order.courts.length * 30,
         userInfo: {
           nickName: info.nickName,
           phoneNum: info.phoneNum,

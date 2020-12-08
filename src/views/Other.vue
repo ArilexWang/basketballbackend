@@ -1,16 +1,42 @@
 <template>
   <div class="home-container">
     <div class="home-content">
+      <el-input
+        placeholder="请输入手机号进行搜索"
+        v-model="search"
+        style="width: 300px"
+        clearable
+        @clear="clearClick"
+      >
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="searchClick"
+        ></el-button>
+      </el-input>
       <el-table :data="datas" height="550" fit border style="">
-        <el-table-column prop="created" label="注册日期" width="180">
+        <el-table-column prop="createdFormat" label="注册日期" width="180">
         </el-table-column>
         <el-table-column prop="nickName" label="昵称" width="120">
         </el-table-column>
         <el-table-column prop="phoneNum" label="电话号码" width="200">
         </el-table-column>
         <el-table-column prop="validTimes" label="次卡" width="120">
+          <template slot-scope="scope">
+            <el-input type="number" v-model="scope.row.validTimes"></el-input>
+          </template>
         </el-table-column>
         <el-table-column prop="validTime" label="时间卡" width="120">
+          <template slot-scope="scope">
+            <el-input type="number" v-model="scope.row.validTime"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="100">
+          <template slot-scope="scope">
+            <el-button @click="handleUpdate(scope.row)" size="mini"
+              >保存</el-button
+            >
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -30,7 +56,15 @@
 /* eslint-disable quotes */
 /* eslint-disable indent */
 /* eslint-disable semi */
-import { getCollectionCount, getCollectionsByPage } from "@/api";
+/* eslint-disable radix */
+/* eslint-disable no-underscore-dangle */
+
+import {
+  getCollectionCount,
+  getCollectionsByPageWithParamAndOrder,
+  updateInfo,
+  getCollectionCountWithParam,
+} from "@/api";
 
 export default {
   name: "other",
@@ -40,6 +74,8 @@ export default {
       currentPage: 1,
       pageSize: 20,
       datas: [],
+      collection: "members",
+      search: "",
     };
   },
   created() {
@@ -53,7 +89,7 @@ export default {
       });
   },
   mounted() {
-    this.getCollection(this.$data.currentPage, this.$data.pageSize).then(
+    this.getCollection(this.$data.currentPage, this.$data.pageSize, {}).then(
       (res) => {
         this.$data.datas = res;
       }
@@ -61,17 +97,24 @@ export default {
   },
   methods: {
     handleCurrentChange(val) {
-      this.getCollection(val, this.$data.pageSize).then((res) => {
+      this.getCollection(val, this.$data.pageSize, {}).then((res) => {
         this.$data.datas = res;
       });
     },
-    getCollection(currentPage, pageSize) {
+    getCollection(currentPage, pageSize, param) {
       return new Promise((resolve, reject) => {
         const offset = (currentPage - 1) * pageSize;
-        getCollectionsByPage("members", offset, pageSize)
+        getCollectionsByPageWithParamAndOrder(
+          this.$data.collection,
+          offset,
+          pageSize,
+          param,
+          "created",
+          "desc"
+        )
           .then((res) => {
             res.data.forEach((element) => {
-              element.created = this.$dateFormat(
+              element.createdFormat = this.$dateFormat(
                 element.created,
                 "yyyy-mm-dd HH:MM"
               );
@@ -82,6 +125,67 @@ export default {
             reject(err);
           });
       });
+    },
+    handleUpdate(info) {
+      console.log(info);
+      this.$confirm("是否提交修改", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          info.validTimes = parseInt(info.validTimes);
+          info.validTime = parseInt(info.validTime);
+          delete info._openid;
+          updateInfo(info, this.$data.collection).then((res) => {
+            console.log(res);
+            if (res.updated == 1) {
+              this.$message({
+                type: "success",
+                message: "已保存!请刷新页面",
+              });
+            } else {
+              this.$message({
+                type: "fail",
+                message: "保存失败!",
+              });
+            }
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$router.go(0);
+          this.$message({
+            type: "info",
+            message: "保存失败",
+          });
+        });
+    },
+    searchClick() {
+      console.log(this.$data.search);
+      getCollectionCountWithParam(this.$data.collection, {
+        phoneNum: this.$data.search,
+      })
+        .then((res) => {
+          console.log(res);
+          this.$data.pageCount = res.total;
+          this.getCollection(this.$data.currentPage, this.$data.pageSize, {
+            phoneNum: this.$data.search,
+          }).then((datas) => {
+            console.log(datas);
+            this.$data.datas = datas;
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    clearClick() {
+      this.getCollection(this.$data.currentPage, this.$data.pageSize, {}).then(
+        (res) => {
+          this.$data.datas = res;
+        }
+      );
     },
   },
 };
