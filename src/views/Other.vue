@@ -31,6 +31,11 @@
             <el-input type="number" v-model="scope.row.validTime"></el-input>
           </template>
         </el-table-column>
+        <el-table-column prop="validTime" label="余额" width="120">
+          <template slot-scope="scope">
+            <el-input type="number" v-model="scope.row.cash"></el-input>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="100">
           <template slot-scope="scope">
             <el-button @click="handleUpdate(scope.row)" size="mini"
@@ -79,7 +84,7 @@ export default {
     };
   },
   created() {
-    getCollectionCount("members")
+    getCollectionCount(this.$data.collection)
       .then((res) => {
         console.log(res);
         this.$data.pageCount = res.total;
@@ -97,6 +102,7 @@ export default {
   },
   methods: {
     handleCurrentChange(val) {
+      this.$data.currentPage = val;
       this.getCollection(val, this.$data.pageSize, {}).then((res) => {
         this.$data.datas = res;
       });
@@ -136,13 +142,20 @@ export default {
         .then(() => {
           info.validTimes = parseInt(info.validTimes);
           info.validTime = parseInt(info.validTime);
+          info.cash = parseInt(info.cash);
           delete info._openid;
           updateInfo(info, this.$data.collection).then((res) => {
-            console.log(res);
             if (res.updated == 1) {
               this.$message({
                 type: "success",
                 message: "已保存!请刷新页面",
+              });
+              this.getCollection(
+                this.$data.currentPage,
+                this.$data.pageSize,
+                {}
+              ).then((res) => {
+                this.$data.datas = res;
               });
             } else {
               this.$message({
@@ -169,7 +182,7 @@ export default {
         .then((res) => {
           console.log(res);
           this.$data.pageCount = res.total;
-          this.getCollection(this.$data.currentPage, this.$data.pageSize, {
+          this.getCollection(1, this.$data.pageSize, {
             phoneNum: this.$data.search,
           }).then((datas) => {
             console.log(datas);
@@ -181,6 +194,14 @@ export default {
         });
     },
     clearClick() {
+      getCollectionCount(this.$data.collection)
+        .then((res) => {
+          console.log(res);
+          this.$data.pageCount = res.total;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       this.getCollection(this.$data.currentPage, this.$data.pageSize, {}).then(
         (res) => {
           this.$data.datas = res;

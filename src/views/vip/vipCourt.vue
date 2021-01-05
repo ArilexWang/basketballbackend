@@ -62,6 +62,19 @@
           width="120"
         >
         </el-table-column>
+        <el-table-column label="二维码" width="120">
+          <template slot-scope="scope">
+            <vue-qr
+              :correctLevel="3"
+              :autoColor="false"
+              colorDark="#313a90"
+              :text="scope.row.qrCode"
+              :size="95"
+              :margin="0"
+              :logoMargin="3"
+            ></vue-qr>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
             <el-button
@@ -94,12 +107,13 @@
 /* eslint-disable operator-linebreak */
 import {
   getCollectionCountWithParam,
-  getCollectionsByPageWithParam,
+  getCollectionsByPageWithParamAndOrder,
   deleteInfo,
-  getDatas,
+  getDatasByOrder,
   addInfo,
   callCloudFunction,
 } from "@/api";
+import VueQr from "vue-qr";
 
 export default {
   name: "other",
@@ -115,8 +129,11 @@ export default {
       collection: "courtOrders",
     };
   },
+  components: {
+    VueQr,
+  },
   created() {
-    getDatas("courts").then((res) => {
+    getDatasByOrder("courts", "number", "asc").then((res) => {
       this.$data.courts = res.data;
     });
     getCollectionCountWithParam(this.$data.collection, { isVIP: true })
@@ -144,6 +161,10 @@ export default {
           element.courtsFormat = this.formatOrderCourts(
             element.orderMsg.courts
           );
+          // eslint-disable-next-line no-underscore-dangle
+          const qrCodeParam = { id: element._id, type: 2 };
+          console.log(JSON.stringify(qrCodeParam));
+          element.qrCode = JSON.stringify(qrCodeParam);
         });
         this.$data.datas = res;
       }
@@ -158,9 +179,16 @@ export default {
     getCollection(currentPage, pageSize) {
       return new Promise((resolve, reject) => {
         const offset = (currentPage - 1) * pageSize;
-        getCollectionsByPageWithParam(this.$data.collection, offset, pageSize, {
-          isVIP: true,
-        })
+        getCollectionsByPageWithParamAndOrder(
+          this.$data.collection,
+          offset,
+          pageSize,
+          {
+            isVIP: true,
+          },
+          "created",
+          "desc"
+        )
           .then((res) => {
             resolve(res.data);
           })

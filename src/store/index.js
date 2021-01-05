@@ -21,6 +21,12 @@ const store = new Vuex.Store({
                 text: '充值信息', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
             },
             {
+                name: 'cash', // 要跳转的路由名称 不是路径
+                size: 18, // icon大小
+                type: 'ios-albums', // icon类型
+                text: '现金充值', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+            },
+            {
                 name: 'other', // 要跳转的路由名称 不是路径
                 size: 18, // icon大小
                 type: 'ios-egg-outline', // icon类型
@@ -36,49 +42,19 @@ const store = new Vuex.Store({
                 name: 'rechargeorders', // 要跳转的路由名称 不是路径
                 size: 18, // icon大小
                 type: 'ios-add-circle', // icon类型
-                text: '充值订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+                text: '野球卡订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+            },
+            {
+                name: 'cashorders', // 要跳转的路由名称 不是路径
+                size: 18, // icon大小
+                type: 'ios-add-circle', // icon类型
+                text: '现金充值订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
             },
             {
                 text: '日期', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
                 size: 18, // icon大小
                 type: 'ios-calendar', // icon类型
-                children: [
-                    {
-                        type: 'ios-notifications-outline',
-                        name: 'sunday',
-                        text: '星期天',
-                    },
-                    {
-                        type: 'ios-notifications-outline',
-                        name: 'monday',
-                        text: '星期一',
-                    },
-                    {
-                        type: 'ios-notifications-outline',
-                        name: 'tuesday',
-                        text: '星期二',
-                    },
-                    {
-                        type: 'ios-notifications-outline',
-                        name: 'wednesday',
-                        text: '星期三',
-                    },
-                    {
-                        type: 'ios-notifications-outline',
-                        name: 'thursday',
-                        text: '星期四',
-                    },
-                    {
-                        type: 'ios-notifications-outline',
-                        name: 'friday',
-                        text: '星期五',
-                    },
-                    {
-                        type: 'ios-notifications-outline',
-                        name: 'saturday',
-                        text: '星期六',
-                    },
-                ],
+                name: 'week',
             },
             {
                 text: 'VIP通道',

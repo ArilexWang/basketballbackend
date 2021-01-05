@@ -16,6 +16,16 @@ export function getDatas(data) {
     })
 }
 
+export function getDatasByOrder(data, fieldPath, order) {
+    return new Promise((resolve, reject) => {
+        db.collection(data).orderBy(fieldPath, order).get().then(res => {
+            resolve(res)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
 export function getDataWithId(data, id) {
     return new Promise((resolve, reject) => {
         db.collection(data).doc(id).get().then(res => {

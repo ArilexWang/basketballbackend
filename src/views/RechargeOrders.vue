@@ -17,11 +17,11 @@
       <el-table height="550" :data="datas" fit border style="">
         <el-table-column prop="orderDate" label="下单时间" width="150">
         </el-table-column>
-        <el-table-column prop="transactionId" label="订单号" width="150">
+        <el-table-column prop="payMsg.transactionId" label="订单号" width="150">
         </el-table-column>
-        <el-table-column prop="recharge.data.name" label="充值类型" width="120">
+        <el-table-column prop="recharge.name" label="充值类型" width="120">
         </el-table-column>
-        <el-table-column prop="cashFee" label="充值金额" width="120">
+        <el-table-column prop="recharge.price" label="充值金额" width="120">
         </el-table-column>
         <el-table-column prop="userInfo.nickName" label="用户昵称" width="120">
         </el-table-column>
@@ -122,9 +122,14 @@ export default {
             res.data.sort((a, b) => b.orderDate - a.orderDate);
             res.data.forEach((element) => {
               element.orderDate = this.$dateFormat(
-                element.orderDate,
+                element.created,
                 "yyyy-mm-dd HH:MM"
               );
+              if (!element.payMsg) {
+                element.payMsg = {
+                  transactionId: "余额支付",
+                };
+              }
             });
             resolve(res.data);
           })
@@ -143,6 +148,14 @@ export default {
           this.$message({
             type: "success",
             message: "删除成功!请刷新页面",
+          });
+          this.getCollection(
+            this.$data.currentPage,
+            this.$data.pageSize,
+            {}
+          ).then((res) => {
+            console.log(res);
+            this.$data.datas = res;
           });
         });
       });

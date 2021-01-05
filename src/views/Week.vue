@@ -2,7 +2,21 @@
   <div class="home-container">
     <div class="home-content">
       <el-row type="flex" align="middle">
-        <el-col :span="8">{{ title }}</el-col>
+        <el-col :span="8">
+          <el-select
+            v-model="selectedValue"
+            placeholder="请选择"
+            @change="selectChanged"
+          >
+            <el-option
+              v-for="item in selectOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
         <el-col :span="8">
           <el-button size="mini" @click="handleAdd">新增时间段</el-button>
         </el-col>
@@ -71,24 +85,32 @@
 import { getDataWithId, updateInfo } from "@/api";
 
 export default {
-  name: "home",
+  name: "week",
   data() {
     return {
       data: {},
-      title: "",
       datas: [],
       newData: [{}],
       collection: "week",
+      selectOptions: [
+        { value: "0", label: "星期日" },
+        { value: "1", label: "星期一" },
+        { value: "2", label: "星期二" },
+        { value: "3", label: "星期三" },
+        { value: "4", label: "星期四" },
+        { value: "5", label: "星期五" },
+        { value: "6", label: "星期六" },
+      ],
+      selectedValue: "0",
     };
   },
   created() {
-    getDataWithId(this.$data.collection, "3").then((res) => {
-      console.log(res);
-      this.$data.data = res.data[0];
-      const arr = ["日", "一", "二", "三", "四", "五", "六"];
-      const str = "星期" + arr[parseInt(this.$data.data._id)];
-      this.$data.title = str;
-    });
+    getDataWithId(this.$data.collection, this.$data.selectedValue).then(
+      (res) => {
+        console.log(res);
+        this.$data.data = res.data[0];
+      }
+    );
   },
   methods: {
     handleUpdate() {
@@ -108,7 +130,6 @@ export default {
           });
           this.$data.data.period.sort((a, b) => a.startHour - b.startHour);
           updateInfo(this.$data.data, this.$data.collection).then((res) => {
-            console.log(res);
             if (res.updated == 1) {
               this.$message({
                 type: "success",
@@ -149,6 +170,15 @@ export default {
     },
     handleAdd() {
       this.$data.data.period.push({});
+    },
+    selectChanged(value) {
+      console.log(value, this.$data.selectOptions[value]);
+      getDataWithId(this.$data.collection, this.$data.selectedValue).then(
+        (res) => {
+          console.log(res);
+          this.$data.data = res.data[0];
+        }
+      );
     },
   },
 };

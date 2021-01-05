@@ -105,7 +105,13 @@ export default {
         .then((loginState) => {
           console.log(loginState);
           localStorage.setItem("userName", "小明");
-          this.$router.push({ path: this.redirect || "/" });
+          localStorage.setItem(
+            "userImg",
+            "https://avatars3.githubusercontent.com/u/22117876?s=460&v=4"
+          );
+          // 登陆成功 假设这里是后台返回的 token
+          localStorage.setItem("token", "i_am_token");
+          this.$router.push({ path: "/" });
         })
         .catch((err) => {
           console.log(err);

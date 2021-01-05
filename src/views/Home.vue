@@ -30,7 +30,7 @@
 /* eslint-disable quotes */
 /* eslint-disable indent */
 /* eslint-disable semi */
-import { getDatas, updateInfo } from "@/api";
+import { getDatasByOrder, updateInfo } from "@/api";
 
 export default {
   name: "home",
@@ -40,7 +40,7 @@ export default {
     };
   },
   created() {
-    getDatas("courts").then((res) => {
+    getDatasByOrder("courts", "number", "asc").then((res) => {
       console.log(res);
       this.$data.datas = res.data;
     });

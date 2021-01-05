@@ -1,4 +1,3 @@
-
 <template>
   <div class="home-container">
     <div class="home-content">
@@ -15,10 +14,14 @@
           @click="searchClick"
         ></el-button>
       </el-input>
-      <el-table :data="datas" height="550" fit border style="">
-        <el-table-column prop="createdFormat" label="下单时间" width="150">
+      <el-table height="550" :data="datas" fit border style="">
+        <el-table-column prop="orderDate" label="下单时间" width="150">
         </el-table-column>
-        <el-table-column prop="_id" label="业务订单号" width="130">
+        <el-table-column
+          prop="payMsg.outTradeNo"
+          label="业务订单号"
+          width="170"
+        >
         </el-table-column>
         <el-table-column
           prop="payMsg.transactionId"
@@ -26,9 +29,9 @@
           width="150"
         >
         </el-table-column>
-        <el-table-column prop="orderDateFormat" label="场地时间" width="200">
+        <el-table-column prop="recharge.name" label="充值类型" width="120">
         </el-table-column>
-        <el-table-column prop="courtsFormat" label="场地" width="150">
+        <el-table-column prop="recharge.price" label="充值金额" width="120">
         </el-table-column>
         <el-table-column prop="userInfo.nickName" label="用户昵称" width="120">
         </el-table-column>
@@ -37,8 +40,6 @@
           label="用户联系方式"
           width="120"
         >
-        </el-table-column>
-        <el-table-column prop="hasRefundFormat" label="退款" width="120">
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -52,6 +53,7 @@
         </el-table-column>
       </el-table>
     </div>
+
     <div class="block">
       <el-pagination
         layout="prev, pager, next"
@@ -68,12 +70,15 @@
 /* eslint-disable quotes */
 /* eslint-disable indent */
 /* eslint-disable semi */
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-else-return */
 /* eslint-disable operator-linebreak */
-/* eslint-disable operator-linebreak */
+
 import {
+  getCollectionCount,
+  deleteInfo,
   getCollectionCountWithParam,
   getCollectionsByPageWithParamAndOrder,
-  deleteInfo,
 } from "@/api";
 
 export default {
@@ -84,15 +89,14 @@ export default {
       currentPage: 1,
       pageSize: 20,
       datas: [],
-      newData: {},
+      boolTrue: true,
+      collection: "cashOrders",
       search: "",
-      collection: "courtOrders",
     };
   },
   created() {
-    getCollectionCountWithParam(this.$data.collection, { isVIP: false })
+    getCollectionCount(this.$data.collection)
       .then((res) => {
-        console.log(res);
         this.$data.pageCount = res.total;
       })
       .catch((err) => {
@@ -100,18 +104,17 @@ export default {
       });
   },
   mounted() {
-    this.getCollection(this.$data.currentPage, this.$data.pageSize, {
-      isVIP: false,
-    }).then((res) => {
-      res.sort((a, b) => b.created - a.created);
-      this.$data.datas = res;
-    });
+    this.getCollection(this.$data.currentPage, this.$data.pageSize, {}).then(
+      (res) => {
+        console.log(res);
+        this.$data.datas = res;
+      }
+    );
   },
   methods: {
     handleCurrentChange(val) {
-      this.getCollection(val, this.$data.pageSize, {
-        isVIP: false,
-      }).then((res) => {
+      console.log(val);
+      this.getCollection(val, this.$data.pageSize, {}).then((res) => {
         this.$data.datas = res;
       });
     },
@@ -127,22 +130,17 @@ export default {
           "desc"
         )
           .then((res) => {
+            res.data.sort((a, b) => b.orderDate - a.orderDate);
             res.data.forEach((element) => {
-              element.createdFormat = this.$dateFormat(
+              element.orderDate = this.$dateFormat(
                 element.created,
                 "yyyy-mm-dd HH:MM"
               );
-              element.courtsFormat = this.formatOrderCourts(
-                element.orderMsg.courts
-              );
-              element.hasRefundFormat = element.hasRefund ? "已退款" : "未退款";
-              if (!element.payMsg) {
-                element.payMsg = { transactionId: "余额支付" };
-              }
-              element.orderDateFormat =
-                this.$dateFormat(element.orderMsg.start, "yyyy-mm-dd HH:MM") +
-                " - " +
-                this.$dateFormat(element.orderMsg.end, "HH:MM");
+              element.recharge.name =
+                "充" +
+                element.recharge.recharge +
+                "送" +
+                element.recharge.handsel;
             });
             resolve(res.data);
           })
@@ -151,72 +149,39 @@ export default {
           });
       });
     },
-    formatOrderCourts(courts) {
-      let courtsStr = "";
-      courts.forEach((court) => {
-        courtsStr += court.name + " ,";
-      });
-      courtsStr = courtsStr.substr(0, courtsStr.length - 1);
-      return courtsStr;
-    },
     handleDelete(info) {
-      this.$confirm("删除当前订单信息前请确认是否完成退款操作", "提示", {
+      this.$confirm("是否删除当前充值信息", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
-        if (info.hasRefund) {
-          deleteInfo(info, this.$data.collection).then((res) => {
+        deleteInfo(info, this.$data.collection).then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!请刷新页面",
+          });
+          this.getCollection(
+            this.$data.currentPage,
+            this.$data.pageSize,
+            {}
+          ).then((res) => {
             console.log(res);
-            this.$message({
-              type: "success",
-              message: "已删除，请刷新页面",
-            });
-            this.getCollection(this.$data.currentPage, this.$data.pageSize, {
-              isVIP: false,
-            }).then((res) => {
-              res.sort((a, b) => b.created - a.created);
-              this.$data.datas = res;
-            });
+            this.$data.datas = res;
           });
-        } else {
-          console.log(info);
-          const promises = info.orderMsg.resourceIds.map((id) => {
-            const resource = { _id: id };
-            console.log(resource);
-            return deleteInfo(resource, "resource");
-          });
-          Promise.all(promises).then((res) => {
-            console.log(res);
-            deleteInfo(info, this.$data.collection).then((deleteRes) => {
-              console.log(deleteRes);
-              this.$message({
-                type: "success",
-                message: "已删除，请刷新页面",
-              });
-            });
-            this.getCollection(this.$data.currentPage, this.$data.pageSize, {
-              isVIP: false,
-            }).then((res) => {
-              res.sort((a, b) => b.created - a.created);
-              this.$data.datas = res;
-            });
-          });
-        }
+        });
       });
     },
     searchClick() {
       getCollectionCountWithParam(this.$data.collection, {
-        isVIP: false,
         "userInfo.phoneNum": this.$data.search,
       })
         .then((res) => {
           console.log(res);
           this.$data.pageCount = res.total;
           this.getCollection(this.$data.currentPage, this.$data.pageSize, {
-            isVIP: false,
             "userInfo.phoneNum": this.$data.search,
           }).then((datas) => {
+            console.log(datas);
             datas.sort((a, b) => b.created - a.created);
             this.$data.datas = datas;
           });
@@ -226,12 +191,12 @@ export default {
         });
     },
     clearClick() {
-      this.getCollection(this.$data.currentPage, this.$data.pageSize, {
-        isVIP: false,
-      }).then((res) => {
-        res.sort((a, b) => b.created - a.created);
-        this.$data.datas = res;
-      });
+      this.getCollection(this.$data.currentPage, this.$data.pageSize, {}).then(
+        (res) => {
+          console.log(res);
+          this.$data.datas = res;
+        }
+      );
     },
   },
 };
