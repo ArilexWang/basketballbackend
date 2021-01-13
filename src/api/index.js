@@ -105,6 +105,17 @@ export function getCollectionCountWithParam(collection, param) {
     })
 }
 
+
+export function getCollectionsWithParam(collection, param) {
+    return new Promise((resolve, reject) => {
+        db.collection(collection).where(param).get().then(res => {
+            resolve(res)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
 export function getCollectionsByPage(collection, page, limit) {
     return new Promise((resolve, reject) => {
         db.collection(collection).limit(limit).skip(page).get().then(res => {

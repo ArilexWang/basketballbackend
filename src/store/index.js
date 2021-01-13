@@ -9,22 +9,16 @@ const store = new Vuex.Store({
         // 左侧菜单栏数据
         menuItems: [
             {
-                name: 'home', // 要跳转的路由名称 不是路径
+                name: 'month', // 要跳转的路由名称 不是路径
                 size: 18, // icon大小
                 type: 'md-home', // icon类型
-                text: '球场信息', // 文本内容
+                text: '每月概况', // 文本内容
             },
             {
-                name: 'recharge', // 要跳转的路由名称 不是路径
+                name: 'date', // 要跳转的路由名称 不是路径
                 size: 18, // icon大小
-                type: 'ios-albums', // icon类型
-                text: '充值信息', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
-            },
-            {
-                name: 'cash', // 要跳转的路由名称 不是路径
-                size: 18, // icon大小
-                type: 'ios-albums', // icon类型
-                text: '现金充值', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+                type: 'md-home', // icon类型
+                text: '当日概况', // 文本内容
             },
             {
                 name: 'other', // 要跳转的路由名称 不是路径
@@ -33,28 +27,60 @@ const store = new Vuex.Store({
                 text: '会员信息', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
             },
             {
-                name: 'court', // 要跳转的路由名称 不是路径
-                size: 18, // icon大小
-                type: 'ios-apps', // icon类型
-                text: '包场订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+                text: '订单',
+                size: 18,
+                type: 'ios-add-circle',
+                children: [
+                    {
+                        name: 'court', // 要跳转的路由名称 不是路径
+                        size: 18, // icon大小
+                        type: 'ios-apps', // icon类型
+                        text: '包场订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+                    },
+                    {
+                        name: 'rechargeorders', // 要跳转的路由名称 不是路径
+                        size: 18, // icon大小
+                        type: 'ios-add-circle', // icon类型
+                        text: '野球卡订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+                    },
+                    {
+                        name: 'cashorders', // 要跳转的路由名称 不是路径
+                        size: 18, // icon大小
+                        type: 'ios-add-circle', // icon类型
+                        text: '现金充值订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+                    },
+                ],
             },
             {
-                name: 'rechargeorders', // 要跳转的路由名称 不是路径
-                size: 18, // icon大小
-                type: 'ios-add-circle', // icon类型
-                text: '野球卡订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
-            },
-            {
-                name: 'cashorders', // 要跳转的路由名称 不是路径
-                size: 18, // icon大小
-                type: 'ios-add-circle', // icon类型
-                text: '现金充值订单', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
-            },
-            {
-                text: '日期', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
-                size: 18, // icon大小
-                type: 'ios-calendar', // icon类型
-                name: 'week',
+                text: '设置',
+                size: 18,
+                type: 'ios-albums',
+                children: [
+                    {
+                        name: 'home', // 要跳转的路由名称 不是路径
+                        size: 18, // icon大小
+                        type: 'md-home', // icon类型
+                        text: '球场信息', // 文本内容
+                    },
+                    {
+                        name: 'recharge', // 要跳转的路由名称 不是路径
+                        size: 18, // icon大小
+                        type: 'ios-albums', // icon类型
+                        text: '充值信息', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+                    },
+                    {
+                        name: 'cash', // 要跳转的路由名称 不是路径
+                        size: 18, // icon大小
+                        type: 'ios-albums', // icon类型
+                        text: '现金充值', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+                    },
+                    {
+                        text: '日期', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+                        size: 18, // icon大小
+                        type: 'ios-calendar', // icon类型
+                        name: 'week',
+                    },
+                ],
             },
             {
                 text: 'VIP通道',

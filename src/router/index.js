@@ -16,11 +16,23 @@ const commonRoutes = [
         meta: { title: '404' },
         component: () => import('../components/404.vue'),
     },
-    { path: '/', redirect: '/home' },
+    { path: '/', redirect: '/date' },
 ]
 
 // 本地所有的页面 需要配合后台返回的数据生成页面
 export const asyncRoutes = {
+    month: {
+        path: '/month',
+        name: 'month',
+        meta: { title: '每月概况' },
+        component: () => import('../views/Monthly.vue'),
+    },
+    date: {
+        path: '/date',
+        name: 'date',
+        meta: { title: '当日概况' },
+        component: () => import('../views/Date.vue'),
+    },
     home: {
         path: 'home',
         name: 'home',
