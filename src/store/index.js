@@ -9,12 +9,6 @@ const store = new Vuex.Store({
         // 左侧菜单栏数据
         menuItems: [
             {
-                name: 'month', // 要跳转的路由名称 不是路径
-                size: 18, // icon大小
-                type: 'md-home', // icon类型
-                text: '每月概况', // 文本内容
-            },
-            {
                 name: 'date', // 要跳转的路由名称 不是路径
                 size: 18, // icon大小
                 type: 'md-home', // icon类型
@@ -25,6 +19,12 @@ const store = new Vuex.Store({
                 size: 18, // icon大小
                 type: 'ios-egg-outline', // icon类型
                 text: '会员信息', // 点击侧边栏跳到一个单独的路由页面，需要提前在 router.js 定义
+            },
+            {
+                name: 'approach',
+                size: 18,
+                type: 'ios-egg-outline',
+                text: '入场记录',
             },
             {
                 text: '订单',

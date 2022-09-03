@@ -16,8 +16,8 @@ Vue.use(ViewUI)
 Vue.use(ElementUI)
 
 const app = cloudbase.init({
-    // env: 'test-3gyot3qv80f8b08e',
-    env: 'props-5gyd9ji1143b3cf0',
+    env: 'test-3gyot3qv80f8b08e',
+    // env: 'props-5gyd9ji1143b3cf0',
 })
 Vue.prototype.$app = app
 Vue.prototype.$axios = axios

@@ -21,12 +21,6 @@ const commonRoutes = [
 
 // 本地所有的页面 需要配合后台返回的数据生成页面
 export const asyncRoutes = {
-    month: {
-        path: '/month',
-        name: 'month',
-        meta: { title: '每月概况' },
-        component: () => import('../views/Monthly.vue'),
-    },
     date: {
         path: '/date',
         name: 'date',
@@ -44,6 +38,12 @@ export const asyncRoutes = {
         name: 'other',
         meta: { title: '会员信息' },
         component: () => import('../views/Other.vue'),
+    },
+    approach: {
+        path: '/approach', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
+        name: 'approach',
+        meta: { title: '入场记录' },
+        component: () => import('../views/Approach.vue'),
     },
     court: {
         path: '/court', // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
