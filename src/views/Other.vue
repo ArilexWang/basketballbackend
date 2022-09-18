@@ -92,7 +92,8 @@ export default {
         handleUpdate(info) {
             this.$prompt("请输入密码", "提示", {
                 confirmButtonText: "确定",
-                cancelButtonText: "取消"
+                cancelButtonText: "取消",
+                inputType: "password"
             })
                 .then(({ value }) => {
                     if (value !== "947117") {

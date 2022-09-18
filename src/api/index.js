@@ -38,7 +38,6 @@ export function getDataWithId(data, id) {
 
 export function updateInfo(info, collection) {
     const id = info._id
-    console.log(id)
     delete info._id
     return new Promise((resolve, reject) => {
         db.collection(collection).doc(id).update(info).then(res => {
