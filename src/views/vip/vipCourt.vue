@@ -312,7 +312,7 @@ export default {
             this.$prompt("请输入密码", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
-                inputType: "password"
+                inputType: "new-password"
             }).then(({ value }) => {
                 if (value !== "947117") {
                     this.$message({
