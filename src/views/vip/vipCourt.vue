@@ -309,25 +309,37 @@ export default {
             return courtsStr;
         },
         handleDelete(info) {
-            this.$confirm("删除当前订单信息前请确认是否完成退款操作", "提示", {
+            this.$prompt("请输入密码", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
-                type: "warning"
-            }).then(() => {
-                console.log(info);
-                const promises = info.orderMsg.resourceIds.map(id => {
-                    const resource = { _id: id };
-                    return deleteInfo(resource, "resource");
-                });
-                Promise.all(promises).then(() => {
-                    deleteInfo(info, this.$data.collection).then(() => {
-                        this.$message({
-                            type: "success",
-                            message: "已删除，即将刷新页面！"
+                inputType: "password"
+            }).then(({ value }) => {
+                if (value !== "947117") {
+                    this.$message({
+                        type: "error",
+                        message: "密码错误"
+                    });
+                    return;
+                }
+                this.$confirm("删除当前订单信息前请确认是否完成退款操作", "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning"
+                }).then(() => {
+                    const promises = info.orderMsg.resourceIds.map(id => {
+                        const resource = { _id: id };
+                        return deleteInfo(resource, "resource");
+                    });
+                    Promise.all(promises).then(() => {
+                        deleteInfo(info, this.$data.collection).then(res => {
+                            this.$message({
+                                type: "success",
+                                message: "已删除，即将刷新页面！"
+                            });
+                            setTimeout(() => {
+                                this.$router.go(0);
+                            }, 1000);
                         });
-                        setTimeout(() => {
-                            this.$router.go(0);
-                        }, 1000);
                     });
                 });
             });
