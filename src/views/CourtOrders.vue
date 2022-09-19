@@ -257,6 +257,8 @@ export default {
                     hasRefund: false,
                     userInfo: member,
                     payBy: "余额支付",
+                    source: "后台订单",
+                    remain: member.cash - element.price,
                     _openid: member._openid
                 };
                 return addInfo(param, "courtOrders");
@@ -283,7 +285,6 @@ export default {
             this.$data.newOrder.price = this.calculatePrice(this.$data.newOrder.courts, this.$data.newOrder.periods);
         },
         calculatePrice(courts, periods) {
-            console.log(courts, periods);
             var totalCost = 0;
             periods.forEach(element => {
                 const findNum = (search, array) => {
@@ -296,26 +297,22 @@ export default {
                 };
                 if (findNum(1, courts) && findNum(2, courts)) {
                     totalCost += 400;
-                }
-                if (findNum(1, courts) || findNum(2, courts)) {
+                } else if (findNum(1, courts) || findNum(2, courts)) {
                     totalCost += 280;
                 }
                 if (findNum(3, courts) && findNum(4, courts)) {
                     totalCost += 400;
-                }
-                if (findNum(3, courts) || findNum(4, courts)) {
+                } else if (findNum(3, courts) || findNum(4, courts)) {
                     totalCost += 280;
                 }
                 if (findNum(5, courts) && findNum(6, courts)) {
                     totalCost += element.fullPrice;
-                }
-                if (findNum(5, courts) || findNum(6, courts)) {
+                } else if (findNum(5, courts) || findNum(6, courts)) {
                     totalCost += element.halfPrice;
                 }
                 if (findNum(7, courts) && findNum(8, courts)) {
                     totalCost += element.fullPrice;
-                }
-                if (findNum(7, courts) || findNum(8, courts)) {
+                } else if (findNum(7, courts) || findNum(8, courts)) {
                     totalCost += element.halfPrice;
                 }
             });
@@ -340,7 +337,14 @@ export default {
                             element.courtsFormat = this.formatOrderCourts(element.orderMsg.courts);
                             element.hasRefundFormat = element.hasRefund ? "已退款" : "未退款";
                             if (!element.payMsg) {
-                                element.payMsg = { transactionId: "余额支付" };
+                                if (element.source == "后台订单") {
+                                    element.payMsg = { transactionId: "余额支付(后台)" };
+                                } else {
+                                    element.payMsg = { transactionId: "余额支付" };
+                                }
+                            }
+                            if (element.remain) {
+                                element.userInfo.nickName = element.userInfo.nickName + "(" + element.remain + ")";
                             }
                             element.orderDateFormat =
                                 this.$dateFormat(element.orderMsg.start, "yyyy-mm-dd HH:MM") +
